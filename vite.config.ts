@@ -12,5 +12,10 @@ export default defineConfig({
     // static generation. GitHub Pages will only serve the generated static files;
     // the Node server is not deployed.
     preset: "node-server",
+    // Put the production build under dist/ so it is easy to locate in GitHub Actions
+    // and matches the sandbox environment used during development.
+    output: {
+      dir: "dist",
+    },
   },
 });
