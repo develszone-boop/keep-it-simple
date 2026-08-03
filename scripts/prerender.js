@@ -30,10 +30,9 @@ for (const route of ROUTES) {
   const res = await Promise.race([
     app.fetch(req, env, context),
     new Promise((_, reject) => {
-      const timeout = setTimeout(() => {
+      setTimeout(() => {
         reject(new Error(`Timed out rendering ${route} after ${RENDER_TIMEOUT_MS}ms`));
       }, RENDER_TIMEOUT_MS);
-      timeout.unref();
     }),
   ]);
   if (!res.ok) {
