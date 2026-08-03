@@ -7,26 +7,10 @@
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
 export default defineConfig({
-  tanstackStart: {
-    // Build the site as a static export: every route is rendered to HTML at build time.
-    // This is required for GitHub Pages, which cannot run a Node/edge server.
-    prerender: {
-      enabled: true,
-    },
-    pages: [
-      { path: "/" },
-      { path: "/about" },
-      { path: "/services" },
-      { path: "/process" },
-      { path: "/portfolio" },
-      { path: "/faq" },
-      { path: "/contact" },
-    ],
-  },
   nitro: {
-    // Use a Node.js server preset during the prerender build so TanStack Start can
-    // preview the app locally and generate the static HTML files. GitHub Pages will
-    // only serve the resulting static files, not the server itself.
+    // Use a Node.js server preset so the app can be built and run locally for
+    // static generation. GitHub Pages will only serve the generated static files;
+    // the Node server is not deployed.
     preset: "node-server",
   },
 });
