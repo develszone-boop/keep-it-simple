@@ -35,6 +35,14 @@ jobs:
       - name: Prerender static pages
         run: node scripts/prerender.js
 
+      - name: Verify Pages artifact
+        run: |
+          test -f dist/client/index.html
+          test -f dist/client/CNAME
+          grep -Fxq 'trikalnetra.com' dist/client/CNAME
+          echo "Verified index.html and CNAME"
+          find dist/client -maxdepth 2 -type f | sort | head -100
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
