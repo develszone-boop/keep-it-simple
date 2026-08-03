@@ -12,7 +12,7 @@ permissions:
 
 concurrency:
   group: "pages"
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   build:
@@ -33,14 +33,20 @@ jobs:
         run: bun run build
 
       - name: Prerender static pages
+        timeout-minutes: 10
         run: node scripts/prerender.js
 
       - name: Verify Pages artifact
         run: |
+          set -euo pipefail
           test -f dist/client/index.html
+          test -f dist/client/404.html
           test -f dist/client/CNAME
           grep -Fxq 'trikalnetra.com' dist/client/CNAME
-          echo "Verified index.html and CNAME"
+          for route in about services process portfolio faq contact; do
+            test -f "dist/client/$route/index.html"
+          done
+          echo "Verified index.html, 404.html, route pages and CNAME"
           find dist/client -maxdepth 2 -type f | sort | head -100
 
       - name: Upload artifact
