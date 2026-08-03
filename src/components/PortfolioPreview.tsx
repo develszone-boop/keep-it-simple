@@ -2,7 +2,7 @@ import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import { ArrowRight, ShoppingCart, Building2, Cpu, HeartPulse, Briefcase, UtensilsCrossed } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import { Link } from "@tanstack/react-router";
 
 const capabilities = [
   {
