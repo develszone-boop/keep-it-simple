@@ -126,14 +126,14 @@ const HeroCarousel = () => {
 
                 {/* Main Heading */}
                 <h1 className="font-display text-5xl md:text-7xl font-bold tracking-tight mb-6">
-                  <span className="text-foreground">{slides[selectedIndex].headline}</span>
+                  <span className="text-foreground">{slides[selectedIndex]?.headline}</span>
                   <br />
-                  <span className="gradient-text">{slides[selectedIndex].subheadline}</span>
+                  <span className="gradient-text">{slides[selectedIndex]?.subheadline}</span>
                 </h1>
 
                 {/* Subtitle */}
                 <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mb-10">
-                  {slides[selectedIndex].description}
+                  {slides[selectedIndex]?.description}
                 </p>
 
                 {/* CTA Buttons */}
