@@ -8,8 +8,25 @@ import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
 export default defineConfig({
   tanstackStart: {
-    // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
-    // nitro/vite builds from this
-    server: { entry: "server" },
+    // Build the site as a static export: every route is rendered to HTML at build time.
+    // This is required for GitHub Pages, which cannot run a Node/edge server.
+    prerender: {
+      enabled: true,
+    },
+    pages: [
+      { path: "/" },
+      { path: "/about" },
+      { path: "/services" },
+      { path: "/process" },
+      { path: "/portfolio" },
+      { path: "/faq" },
+      { path: "/contact" },
+    ],
+  },
+  nitro: {
+    // Use a Node.js server preset during the prerender build so TanStack Start can
+    // preview the app locally and generate the static HTML files. GitHub Pages will
+    // only serve the resulting static files, not the server itself.
+    preset: "node-server",
   },
 });
