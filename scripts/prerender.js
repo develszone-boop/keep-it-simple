@@ -6,6 +6,16 @@ import { pathToFileURL } from "node:url";
 const ROUTES = ["/", "/about", "/services", "/process", "/portfolio", "/faq", "/contact"];
 const RENDER_TIMEOUT_MS = 30_000;
 
+// Never let a stalled render or a swallowed rejection hang the CI step.
+process.on("unhandledRejection", (error) => {
+  console.error("Prerender failed (unhandled rejection):", error);
+  process.exit(1);
+});
+process.on("uncaughtException", (error) => {
+  console.error("Prerender failed (uncaught exception):", error);
+  process.exit(1);
+});
+
 const serverPath =
   process.env.SERVER_PATH ??
   (existsSync("dist/server/index.mjs") ? "dist/server/index.mjs" : ".output/server/index.mjs");
@@ -27,14 +37,18 @@ const context = { waitUntil: () => {}, passThroughOnException: () => {} };
 for (const route of ROUTES) {
   const url = `http://localhost${route}`;
   const req = new Request(url);
+  let timer;
   const res = await Promise.race([
     app.fetch(req, env, context),
     new Promise((_, reject) => {
-      setTimeout(() => {
+      timer = setTimeout(() => {
         reject(new Error(`Timed out rendering ${route} after ${RENDER_TIMEOUT_MS}ms`));
       }, RENDER_TIMEOUT_MS);
+      // A pending timer must not keep the event loop alive on success.
+      timer.unref?.();
     }),
   ]);
+  clearTimeout(timer);
   if (!res.ok) {
     throw new Error(`Failed to render ${route}: ${res.status}`);
   }
