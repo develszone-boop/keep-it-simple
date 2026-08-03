@@ -1,8 +1,6 @@
-import { spawn } from "node:child_process";
 import { cpSync, existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 
-const PORT = 3456;
 const ROUTES = ["/", "/about", "/services", "/process", "/portfolio", "/faq", "/contact"];
 
 const serverPath =
@@ -14,21 +12,21 @@ const publicDir =
   (existsSync("dist/client") ? "dist/client" : ".output/public");
 
 if (!existsSync(serverPath)) {
-  console.error(`Server not found at ${serverPath}`);
+  console.error(`Server bundle not found at ${serverPath}`);
   process.exit(1);
 }
 
-const server = spawn("node", [serverPath], {
-  env: { ...process.env, NITRO_PORT: String(PORT), PORT: String(PORT) },
-  stdio: "inherit",
-});
+const { default: app } = await import(serverPath);
 
-await waitForServer(`http://localhost:${PORT}/`, 30);
+const env = {};
+const context = { waitUntil: () => {}, passThroughOnException: () => {} };
 
 for (const route of ROUTES) {
-  const res = await fetch(`http://localhost:${PORT}${route}`);
+  const url = `http://localhost${route}`;
+  const req = new Request(url);
+  const res = await app.fetch(req, env, context);
   if (!res.ok) {
-    throw new Error(`Failed to fetch ${route}: ${res.status}`);
+    throw new Error(`Failed to render ${route}: ${res.status}`);
   }
   const html = await res.text();
   const outputPath =
@@ -49,19 +47,4 @@ console.log(`Copied ${indexPath} → ${notFoundPath}`);
 if (existsSync("CNAME")) {
   cpSync("CNAME", join(publicDir, "CNAME"));
   console.log("Copied CNAME to output");
-}
-
-server.kill();
-
-async function waitForServer(url, retries) {
-  for (let i = 0; i < retries; i++) {
-    try {
-      const res = await fetch(url);
-      if (res.ok) return;
-    } catch {
-      // server not ready yet
-    }
-    await new Promise((r) => setTimeout(r, 1000));
-  }
-  throw new Error("Server did not start");
 }
