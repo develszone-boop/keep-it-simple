@@ -18,7 +18,7 @@ if (!existsSync(serverPath)) {
   process.exit(1);
 }
 
-const { default: app } = await import(serverPath);
+const { default: app } = await import(pathToFileURL(serverPath).href);
 
 const env = {};
 const context = { waitUntil: () => {}, passThroughOnException: () => {} };
