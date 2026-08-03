@@ -1,0 +1,75 @@
+import { spawn } from "node:child_process";
+import { cpSync, mkdirSync, writeFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+
+const PORT = 3456;
+const ROUTES = ["/", "/about", "/services", "/process", "/portfolio", "/faq", "/contact"];
+
+const serverPath =
+  process.env.SERVER_PATH ??
+  (exists("dist/server/index.mjs") ? "dist/server/index.mjs" : ".output/server/index.mjs");
+
+const publicDir =
+  process.env.PUBLIC_DIR ??
+  (exists("dist/client") ? "dist/client" : ".output/public");
+
+if (!exists(serverPath)) {
+  console.error(`Server not found at ${serverPath}`);
+  process.exit(1);
+}
+
+const server = spawn("node", [serverPath], {
+  env: { ...process.env, NITRO_PORT: String(PORT), PORT: String(PORT) },
+  stdio: "inherit",
+});
+
+await waitForServer(`http://localhost:${PORT}/`, 30);
+
+for (const route of ROUTES) {
+  const res = await fetch(`http://localhost:${PORT}${route}`);
+  if (!res.ok) {
+    throw new Error(`Failed to fetch ${route}: ${res.status}`);
+  }
+  const html = await res.text();
+  const outputPath =
+    route === "/" ? join(publicDir, "index.html") : join(publicDir, route, "index.html");
+  mkdirSync(dirname(outputPath), { recursive: true });
+  writeFileSync(outputPath, html);
+  console.log(`Prerendered ${route} → ${outputPath}`);
+}
+
+// 404.html is required for GitHub Pages so client-side routing (TanStack Router)
+// can take over when a user visits a deep link directly.
+const indexPath = join(publicDir, "index.html");
+const notFoundPath = join(publicDir, "404.html");
+cpSync(indexPath, notFoundPath);
+console.log(`Copied ${indexPath} → ${notFoundPath}`);
+
+// CNAME tells GitHub Pages which custom domain to serve.
+if (exists("CNAME")) {
+  cpSync("CNAME", join(publicDir, "CNAME"));
+  console.log("Copied CNAME to output");
+}
+
+server.kill();
+
+function exists(path) {
+  try {
+    return (await import("node:fs/promises")).stat(path).then(() => true, () => false);
+  } catch {
+    return false;
+  }
+}
+
+async function waitForServer(url, retries) {
+  for (let i = 0; i < retries; i++) {
+    try {
+      const res = await fetch(url);
+      if (res.ok) return;
+    } catch {
+      // server not ready yet
+    }
+    await new Promise((r) => setTimeout(r, 1000));
+  }
+  throw new Error("Server did not start");
+}
