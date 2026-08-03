@@ -17,6 +17,7 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -37,17 +38,78 @@ jobs:
         run: node scripts/prerender.js
 
       - name: Verify Pages artifact
+        shell: bash
         run: |
-          set -euo pipefail
-          test -f dist/client/index.html
-          test -f dist/client/404.html
-          test -f dist/client/CNAME
-          grep -Fxq 'trikalnetra.com' dist/client/CNAME
-          for route in about services process portfolio faq contact; do
-            test -f "dist/client/$route/index.html"
-          done
-          echo "Verified index.html, 404.html, route pages and CNAME"
-          find dist/client -maxdepth 2 -type f | sort | head -100
+          set +e
+
+          echo "======================================"
+          echo "Listing dist directory"
+          echo "======================================"
+
+          if [ ! -d dist ]; then
+            echo "ERROR: dist directory does not exist"
+            exit 1
+          fi
+
+          find dist -maxdepth 3 -type f | sort
+
+          echo ""
+          echo "======================================"
+          echo "Listing dist/client"
+          echo "======================================"
+
+          if [ ! -d dist/client ]; then
+            echo "ERROR: dist/client does not exist"
+            exit 1
+          fi
+
+          find dist/client -maxdepth 4 -type f | sort
+
+          echo ""
+          echo "======================================"
+          echo "Checking required files"
+          echo "======================================"
+
+          missing=0
+
+          check_file () {
+            if [ -f "$1" ]; then
+              echo "✓ $1"
+            else
+              echo "✗ MISSING: $1"
+              missing=1
+            fi
+          }
+
+          check_file dist/client/index.html
+          check_file dist/client/404.html
+          check_file dist/client/CNAME
+          check_file dist/client/about/index.html
+          check_file dist/client/services/index.html
+          check_file dist/client/process/index.html
+          check_file dist/client/portfolio/index.html
+          check_file dist/client/faq/index.html
+          check_file dist/client/contact/index.html
+
+          echo ""
+          echo "======================================"
+          echo "CNAME"
+          echo "======================================"
+
+          if [ -f dist/client/CNAME ]; then
+            cat dist/client/CNAME
+          fi
+
+          if [ "$missing" -ne 0 ]; then
+            echo ""
+            echo "One or more required files are missing."
+            exit 1
+          fi
+
+          grep -Fxq "trikalnetra.com" dist/client/CNAME
+
+          echo ""
+          echo "Verification passed."
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
@@ -57,9 +119,11 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
+
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
