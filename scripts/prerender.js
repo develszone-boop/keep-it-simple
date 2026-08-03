@@ -29,7 +29,16 @@ if (!existsSync(serverPath)) {
   process.exit(1);
 }
 
-const { default: app } = await import(pathToFileURL(serverPath).href);
+const mod = await import(pathToFileURL(serverPath).href);
+const handler = mod.default?.fetch ?? mod.fetch;
+if (typeof handler !== "function") {
+  console.error(
+    `No fetch handler exported from ${serverPath}. Exported keys: ${Object.keys(mod).join(", ") || "(none)"}` +
+      `; default export keys: ${mod.default ? Object.keys(mod.default).join(", ") || "(none)" : "(no default export)"}`,
+  );
+  process.exit(1);
+}
+const fetchHandler = (request) => handler(request, env, context);
 
 const env = {};
 const context = { waitUntil: () => {}, passThroughOnException: () => {} };
@@ -39,7 +48,7 @@ for (const route of ROUTES) {
   const req = new Request(url);
   let timer;
   const res = await Promise.race([
-    app.fetch(req, env, context),
+    fetchHandler(req),
     new Promise((_, reject) => {
       timer = setTimeout(() => {
         reject(new Error(`Timed out rendering ${route} after ${RENDER_TIMEOUT_MS}ms`));
