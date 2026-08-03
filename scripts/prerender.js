@@ -1,5 +1,5 @@
 import { spawn } from "node:child_process";
-import { cpSync, mkdirSync, writeFileSync } from "node:fs";
+import { cpSync, existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 
 const PORT = 3456;
@@ -7,13 +7,13 @@ const ROUTES = ["/", "/about", "/services", "/process", "/portfolio", "/faq", "/
 
 const serverPath =
   process.env.SERVER_PATH ??
-  (exists("dist/server/index.mjs") ? "dist/server/index.mjs" : ".output/server/index.mjs");
+  (existsSync("dist/server/index.mjs") ? "dist/server/index.mjs" : ".output/server/index.mjs");
 
 const publicDir =
   process.env.PUBLIC_DIR ??
-  (exists("dist/client") ? "dist/client" : ".output/public");
+  (existsSync("dist/client") ? "dist/client" : ".output/public");
 
-if (!exists(serverPath)) {
+if (!existsSync(serverPath)) {
   console.error(`Server not found at ${serverPath}`);
   process.exit(1);
 }
@@ -46,20 +46,12 @@ cpSync(indexPath, notFoundPath);
 console.log(`Copied ${indexPath} → ${notFoundPath}`);
 
 // CNAME tells GitHub Pages which custom domain to serve.
-if (exists("CNAME")) {
+if (existsSync("CNAME")) {
   cpSync("CNAME", join(publicDir, "CNAME"));
   console.log("Copied CNAME to output");
 }
 
 server.kill();
-
-function exists(path) {
-  try {
-    return (await import("node:fs/promises")).stat(path).then(() => true, () => false);
-  } catch {
-    return false;
-  }
-}
 
 async function waitForServer(url, retries) {
   for (let i = 0; i < retries; i++) {
