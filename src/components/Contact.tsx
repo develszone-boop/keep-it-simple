@@ -9,14 +9,14 @@ const contactInfo = [
   {
     icon: Mail,
     label: "Email Us",
-    value: "hello.trikalnetra@gmail.com",
-    href: "mailto:hello.trikalnetra@gmail.com",
+    value: "hello@trikalnetra.com",
+    href: "mailto:hello@trikalnetra.com",
   },
   {
     icon: Phone,
     label: "Call Us",
-    value: "+91 9063362994",
-    href: "tel:+919063362994",
+    value: "+91 9866137645, +91 9390595302",
+    href: "tel:+919866137645",
   },
   {
     icon: MapPin,
