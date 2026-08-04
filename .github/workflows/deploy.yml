@@ -126,15 +126,15 @@ jobs:
 
           check_app_html () {
             local file="$1"
-            grep -Eqi '<!doctype html|<html' "$file" || {
+            grep -aEqi '<!doctype html|<html' "$file" || {
               echo "ERROR: $file is not an HTML document"
               exit 1
             }
-            grep -qi 'trikalnetra' "$file" || {
+            grep -aqi 'trikalnetra' "$file" || {
               echo "ERROR: $file does not contain trikalnetra application metadata"
               exit 1
             }
-            if grep -Eqi 'generator[^>]*jekyll|Build with Lovable|npm i && npm run dev' "$file"; then
+            if grep -aEqi 'generator[^>]*jekyll|Build with Lovable|npm i && npm run dev' "$file"; then
               echo "ERROR: $file contains Jekyll/README output instead of the application"
               exit 1
             fi
@@ -150,7 +150,7 @@ jobs:
           check_app_html dist/client/faq/index.html
           check_app_html dist/client/contact/index.html
 
-          asset_refs="$(grep -Eo '(src|href)=[\"'"'"']/assets/[^\"'"'"']+' dist/client/index.html || true)"
+          asset_refs="$(grep -aEo '(src|href)=[\"'"'"']/assets/[^\"'"'"']+' dist/client/index.html || true)"
           if [ -z "$asset_refs" ]; then
             echo "ERROR: Generated homepage contains no root-relative application assets"
             exit 1
@@ -200,10 +200,10 @@ jobs:
               body="$(mktemp)"
               status="$(curl --silent --show-error --location --output "$body" --write-out '%{http_code}' --max-time 30 "${SITE_URL}${route}" || true)"
 
-              if [ "$status" != "200" ] || ! grep -qi 'trikalnetra' "$body"; then
+              if [ "$status" != "200" ] || ! grep -aqi 'trikalnetra' "$body"; then
                 echo "Attempt ${attempt}: ${route} is not serving the application (HTTP ${status:-request-failed})"
                 failed=1
-              elif grep -Eqi 'generator[^>]*jekyll|Build with Lovable|npm i && npm run dev|Page not found · GitHub Pages' "$body"; then
+              elif grep -aEqi 'generator[^>]*jekyll|Build with Lovable|npm i && npm run dev|Page not found · GitHub Pages' "$body"; then
                 echo "Attempt ${attempt}: ${route} is serving Jekyll/README or GitHub's default 404"
                 failed=1
               else
