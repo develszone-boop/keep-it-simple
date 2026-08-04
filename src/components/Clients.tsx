@@ -5,8 +5,6 @@ import { useRef } from "react";
 import dcsLogo from "@/assets/clients/dcs-tech.svg";
 import agrLogo from "@/assets/clients/agr-foundation.svg";
 import vedhaMantraLogo from "@/assets/clients/vedha-mantra.svg";
-import anikaFarmLogo from "@/assets/clients/anika-farm.webp";
-import sinineLogo from "@/assets/clients/sinine.png";
 
 interface Client {
   name: string;
@@ -42,14 +40,24 @@ const clients: Client[] = [
     isTextLogo: true,
   },
   {
-    name: "Anika Farm",
-    logo: anikaFarmLogo,
-    url: "https://anika.farm/",
+    name: "Gear Monkey",
+    url: "https://gearmonkey.in/",
+    isTextLogo: true,
   },
   {
-    name: "Sinine",
-    logo: sinineLogo,
-    url: "https://sinine.in/",
+    name: "Monockle",
+    url: "https://www.monockle.com/",
+    isTextLogo: true,
+  },
+  {
+    name: "MindSportz",
+    url: "https://mindsportz.in/",
+    isTextLogo: true,
+  },
+  {
+    name: "Kyrosonics",
+    url: "https://kyrosonics.com/",
+    isTextLogo: true,
   },
 ];
 
@@ -97,6 +105,7 @@ const Clients = () => {
                 <img
                   src={client.logo}
                   alt={`${client.name} logo`}
+                  loading="lazy"
                   className="max-h-14 max-w-full object-contain grayscale group-hover:grayscale-0 transition-all duration-300"
                 />
               )}

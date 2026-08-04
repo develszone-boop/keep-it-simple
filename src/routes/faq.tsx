@@ -1,18 +1,22 @@
 import { createFileRoute } from "@tanstack/react-router";
 import FAQPage from "@/pages/FAQPage";
-
-const title = "FAQ | Answers About Working With trikalnetra";
-const description =
-  "Common questions about trikalnetra's services, engagement models, timelines, and pricing—answered.";
+import { faqs } from "@/lib/faq-data";
+import { breadcrumbJsonLd, faqJsonLd, pageSeo } from "@/lib/seo";
 
 export const Route = createFileRoute("/faq")({
-  head: () => ({
-    meta: [
-      { title },
-      { name: "description", content: description },
-      { property: "og:title", content: title },
-      { property: "og:description", content: description },
-    ],
-  }),
+  head: () =>
+    pageSeo({
+      path: "/faq",
+      title: "FAQ | Answers About Working With trikalnetra",
+      description:
+        "Common questions about trikalnetra's services, engagement models, timelines, and pricing—answered.",
+      jsonLd: [
+        faqJsonLd(faqs),
+        breadcrumbJsonLd([
+          { name: "Home", path: "/" },
+          { name: "FAQ", path: "/faq" },
+        ]),
+      ],
+    }),
   component: FAQPage,
 });
