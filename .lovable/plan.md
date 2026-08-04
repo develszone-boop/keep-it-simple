@@ -1,36 +1,26 @@
-# Align the build output directory so Pages uploads the real site
-
-## Verified state
-
-- Local build output: `dist/client` (static assets) + `dist/server`, and `dist/nitro.json` reports `"preset": "cloudflare-module"` with `"publicDir": "client"`.
-- `dist/client` already contains `index.html`, `404.html`, `CNAME`, `assets/`, and the `about`, `services`, `process`, `portfolio`, `faq`, `contact` folders.
-- `vite.config.ts` sets only `nitro.output.dir: "dist"` — the preset is left to auto-detection.
-- `nitro` is pinned to an exact version in `package.json`, so the CI/local difference is not a version drift.
-
-## Cause
-
-The server preset is auto-detected. In the sandbox it resolves to `cloudflare-module`, whose public dir is `client`. Inside GitHub Actions, Nitro detects the CI provider and resolves to a different preset, whose public dir is `public` — hence `dist/public` on the runner and `dist/client` locally. The workflow and prerender script hard-code `dist/client`, so the verify step fails.
+# Update contact details and client list
 
 ## Changes
 
-1. **`vite.config.ts`** — stop relying on auto-detection: pin `preset: "cloudflare-module"` (the one the prerender script's `fetch(request, env, context)` handler shape depends on) and pin the output paths explicitly:
-   - `output.dir: "dist"`
-   - `output.publicDir: "dist/client"`
-   
-   This makes the runner produce the same layout as the sandbox.
+1. **Clients section** (`src/components/Clients.tsx`)
+   - Remove Anika Farm and Sinine.
+   - Add four new clients as text-only logos since no image assets are provided:
+     - Gear Monkey — https://gearmonkey.in/
+     - Monockle — https://www.monockle.com/
+     - MindSportz — https://mindsportz.in/
+     - Kyrosonics — https://kyrosonics.com/
+   - Keep the existing grid layout and hover behavior unchanged.
 
-2. **`scripts/prerender.js`** — remove the guesswork: read `dist/nitro.json` and use its `publicDir`/`serverEntry` values as the source of truth, falling back to `dist/client` only if that file is absent. Print the resolved directory at the start so the CI log states which folder is being written.
+2. **Contact details** (`src/components/Contact.tsx`)
+   - Email: `hello.trikalnetra@gmail.com`
+   - Phone: `+91 9063362994` (replace the previous two-number display and `tel:` link)
+   - Keep the third "Our Location" card unchanged.
 
-3. **`.github/workflows/deploy.yml`** — keep the existing single pipeline and the existing `actions/upload-pages-artifact@v3` step; keep `dist/client` as the uploaded path (now guaranteed by change 1), and have the verify step print the resolved directory from `dist/nitro.json` and fail with a clear message if it disagrees with the upload path.
+3. **WhatsApp button** (`src/components/WhatsAppButton.tsx`)
+   - Update the click-to-chat number to `919063362994` so the floating button matches the new contact phone.
 
-No new pipeline, no change to the app, routes, or DNS.
+## Verification
 
-## Verification before handing back
-
-Run a clean build plus `node scripts/prerender.js` in the sandbox and confirm:
-- `dist/nitro.json` reports `publicDir: client`
-- `dist/client/index.html`, `dist/client/404.html`, `dist/client/CNAME` (containing `trikalnetra.com`)
-- `dist/client/about|services|process|portfolio|faq|contact/index.html`
-- prerender exits 0
-
-The directory uploaded to Pages stays **`dist/client`**.
+- Preview the homepage to confirm the client grid shows the four new names and no longer shows Anika Farm or Sinine.
+- Preview the contact page to confirm the new email and phone number.
+- Check the WhatsApp button links to the new number.
