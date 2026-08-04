@@ -1,18 +1,20 @@
 import { createFileRoute } from "@tanstack/react-router";
 import ProcessPage from "@/pages/ProcessPage";
-
-const title = "Our Process | How trikalnetra Delivers";
-const description =
-  "A clear, collaborative delivery process—from discovery and strategy to build, launch and continuous optimisation.";
+import { breadcrumbJsonLd, pageSeo } from "@/lib/seo";
 
 export const Route = createFileRoute("/process")({
-  head: () => ({
-    meta: [
-      { title },
-      { name: "description", content: description },
-      { property: "og:title", content: title },
-      { property: "og:description", content: description },
-    ],
-  }),
+  head: () =>
+    pageSeo({
+      path: "/process",
+      title: "Our Process | How trikalnetra Delivers",
+      description:
+        "A clear, collaborative delivery process—from discovery and strategy to build, launch and continuous optimisation.",
+      jsonLd: [
+        breadcrumbJsonLd([
+          { name: "Home", path: "/" },
+          { name: "Process", path: "/process" },
+        ]),
+      ],
+    }),
   component: ProcessPage,
 });

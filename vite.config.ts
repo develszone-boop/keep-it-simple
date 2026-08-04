@@ -8,6 +8,13 @@ import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
 export default defineConfig({
   nitro: {
+    // Pin the preset: Nitro otherwise auto-detects the CI provider inside GitHub
+    // Actions and emits a different public directory (dist/public) than the
+    // sandbox (dist/client). The cloudflare-module build is also the one whose
+    // default export exposes fetch(request, env, context), which
+    // scripts/prerender.js imports directly to generate static HTML.
+    // Nothing is deployed to Cloudflare — GitHub Pages only serves the static files.
+    preset: "cloudflare-module",
     // Keep the default (Cloudflare module) server build: its default export exposes
     // fetch(request, env, context), which scripts/prerender.js imports directly to
     // generate static HTML. Nothing is deployed to Cloudflare — GitHub Pages only
@@ -16,6 +23,7 @@ export default defineConfig({
     // and matches the sandbox environment used during development.
     output: {
       dir: "dist",
+      publicDir: "dist/client",
     },
   },
 });
