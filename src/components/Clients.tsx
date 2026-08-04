@@ -30,13 +30,8 @@ const clients: Client[] = [
     url: "https://vedhamantra.com/",
   },
   {
-    name: "SAM LootBig",
-    url: "https://sam.lootbig.com/",
-    isTextLogo: true,
-  },
-  {
-    name: "LootBig Corporate",
-    url: "https://corporate.lootbig.com/",
+    name: "For You Local",
+    url: "https://foryoulocal.com/",
     isTextLogo: true,
   },
   {
