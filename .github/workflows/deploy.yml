@@ -40,7 +40,7 @@ jobs:
       - name: Verify Pages artifact
         shell: bash
         run: |
-          set +e
+          set -euo pipefail
 
           echo "======================================"
           echo "Listing dist directory"
@@ -89,14 +89,12 @@ jobs:
           echo "Checking required files"
           echo "======================================"
 
-          missing=0
-
           check_file () {
             if [ -f "$1" ]; then
               echo "✓ $1"
             else
               echo "✗ MISSING: $1"
-              missing=1
+              exit 1
             fi
           }
 
@@ -119,13 +117,51 @@ jobs:
             cat dist/client/CNAME
           fi
 
-          if [ "$missing" -ne 0 ]; then
-            echo ""
-            echo "One or more required files are missing."
+          grep -Fxq "trikalnetra.com" dist/client/CNAME
+
+          echo ""
+          echo "======================================"
+          echo "Checking generated application content"
+          echo "======================================"
+
+          check_app_html () {
+            local file="$1"
+            grep -aEqi '<!doctype html|<html' "$file" || {
+              echo "ERROR: $file is not an HTML document"
+              exit 1
+            }
+            grep -aqi 'trikalnetra' "$file" || {
+              echo "ERROR: $file does not contain trikalnetra application metadata"
+              exit 1
+            }
+            if grep -aEqi 'generator[^>]*jekyll|Build with Lovable|npm i && npm run dev' "$file"; then
+              echo "ERROR: $file contains Jekyll/README output instead of the application"
+              exit 1
+            fi
+            echo "✓ Application HTML: $file"
+          }
+
+          check_app_html dist/client/index.html
+          check_app_html dist/client/404.html
+          check_app_html dist/client/about/index.html
+          check_app_html dist/client/services/index.html
+          check_app_html dist/client/process/index.html
+          check_app_html dist/client/portfolio/index.html
+          check_app_html dist/client/faq/index.html
+          check_app_html dist/client/contact/index.html
+
+          asset_refs="$(grep -aEo '(src|href)=[\"'"'"']/assets/[^\"'"'"']+' dist/client/index.html || true)"
+          if [ -z "$asset_refs" ]; then
+            echo "ERROR: Generated homepage contains no root-relative application assets"
             exit 1
           fi
 
-          grep -Fxq "trikalnetra.com" dist/client/CNAME
+          while IFS= read -r reference; do
+            asset_path="${reference#*=}"
+            asset_path="${asset_path#\"}"
+            asset_path="${asset_path#\'}"
+            check_file "dist/client${asset_path}"
+          done <<< "$asset_refs"
 
           echo ""
           echo "Verification passed."
@@ -147,3 +183,47 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+      - name: Verify live custom domain
+        shell: bash
+        env:
+          SITE_URL: https://trikalnetra.com
+        run: |
+          set -euo pipefail
+
+          routes=(/ /about /services /process /portfolio /faq /contact)
+
+          for attempt in {1..12}; do
+            failed=0
+
+            for route in "${routes[@]}"; do
+              body="$(mktemp)"
+              status="$(curl --silent --show-error --location --output "$body" --write-out '%{http_code}' --max-time 30 "${SITE_URL}${route}" || true)"
+
+              if [ "$status" != "200" ] || ! grep -aqi 'trikalnetra' "$body"; then
+                echo "Attempt ${attempt}: ${route} is not serving the application (HTTP ${status:-request-failed})"
+                failed=1
+              elif grep -aEqi 'generator[^>]*jekyll|Build with Lovable|npm i && npm run dev|Page not found · GitHub Pages' "$body"; then
+                echo "Attempt ${attempt}: ${route} is serving Jekyll/README or GitHub's default 404"
+                failed=1
+              else
+                echo "✓ ${route} serves the trikalnetra application"
+              fi
+
+              rm -f "$body"
+            done
+
+            if [ "$failed" -eq 0 ]; then
+              echo "Live custom-domain verification passed."
+              exit 0
+            fi
+
+            if [ "$attempt" -lt 12 ]; then
+              echo "Waiting for the Pages deployment to propagate..."
+              sleep 10
+            fi
+          done
+
+          echo "ERROR: The custom domain did not serve the deployed application on every route."
+          echo "Check Settings → Pages → Source is GitHub Actions and cancel any legacy 'pages build and deployment' run."
+          exit 1
