@@ -10,15 +10,21 @@ const testimonials = [
     rating: 5,
   },
   {
-    name: "Jangaiah",
-    role: "CEO, Anika Farm",
-    content: "Working with trikalnetra transformed our agricultural business. Their website design and digital marketing strategies helped us reach customers directly, increasing our online sales significantly.",
+    name: "Sharath",
+    role: "Co-Founder, Gear Monkey",
+    content: "trikalnetra rebuilt our storefront experience from the ground up. Pages load faster, the catalogue is far easier to browse, and we've seen a clear lift in enquiries since launch.",
     rating: 5,
   },
   {
-    name: "Vinodh Tech",
-    role: "LootBig-Tech",
-    content: "The team at trikalnetra exceeded our expectations. Their technical expertise and creative solutions helped us establish a strong digital presence in the competitive tech market.",
+    name: "Arjun",
+    role: "CEO, Monockle",
+    content: "The team understood our brand instantly and translated it into a site that actually converts. Clear communication, quick turnarounds, and a polished final product.",
+    rating: 5,
+  },
+  {
+    name: "Dr. Venu Kumar",
+    role: "CEO, MindSportz",
+    content: "From strategy to execution, trikalnetra handled everything. Our online visibility improved noticeably and registrations now come in steadily through the website.",
     rating: 5,
   },
 ];
@@ -51,7 +57,7 @@ const Testimonials = () => {
         </motion.div>
 
         {/* Testimonials Grid */}
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           {testimonials.map((testimonial, index) => (
             <motion.div
               key={testimonial.name}
