@@ -1,18 +1,20 @@
 import { createFileRoute } from "@tanstack/react-router";
 import PortfolioPage from "@/pages/PortfolioPage";
-
-const title = "Capabilities | trikalnetra Work and Case Studies";
-const description =
-  "See the capabilities and client work behind trikalnetra's analytics, marketing, and technology engagements.";
+import { breadcrumbJsonLd, pageSeo } from "@/lib/seo";
 
 export const Route = createFileRoute("/portfolio")({
-  head: () => ({
-    meta: [
-      { title },
-      { name: "description", content: description },
-      { property: "og:title", content: title },
-      { property: "og:description", content: description },
-    ],
-  }),
+  head: () =>
+    pageSeo({
+      path: "/portfolio",
+      title: "Capabilities | trikalnetra Work and Case Studies",
+      description:
+        "See the capabilities and client work behind trikalnetra's analytics, marketing, and technology engagements.",
+      jsonLd: [
+        breadcrumbJsonLd([
+          { name: "Home", path: "/" },
+          { name: "Capabilities", path: "/portfolio" },
+        ]),
+      ],
+    }),
   component: PortfolioPage,
 });
