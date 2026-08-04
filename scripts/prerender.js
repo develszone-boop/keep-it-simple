@@ -1,5 +1,5 @@
-import { cpSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
-import { dirname, isAbsolute, join } from "node:path";
+import { cpSync, existsSync, mkdirSync, writeFileSync } from "node:fs";
+import { dirname, join } from "node:path";
 import { pathToFileURL } from "node:url";
 
 
@@ -16,36 +16,13 @@ process.on("uncaughtException", (error) => {
   process.exit(1);
 });
 
-// dist/nitro.json is the build's own record of where it wrote things — use it as
-// the source of truth instead of guessing between dist/client and dist/public.
-const OUTPUT_DIR = process.env.OUTPUT_DIR ?? "dist";
-const nitroMetaPath = join(OUTPUT_DIR, "nitro.json");
-let nitroMeta = {};
-if (existsSync(nitroMetaPath)) {
-  try {
-    nitroMeta = JSON.parse(readFileSync(nitroMetaPath, "utf8"));
-  } catch (error) {
-    console.error(`Could not parse ${nitroMetaPath}:`, error);
-  }
-} else {
-  console.warn(`${nitroMetaPath} not found; falling back to default output paths.`);
-}
-
-const resolveOut = (value, fallback) => {
-  if (!value) return fallback;
-  return isAbsolute(value) || value.startsWith(`${OUTPUT_DIR}/`)
-    ? value
-    : join(OUTPUT_DIR, value);
-};
-
 const serverPath =
-  process.env.SERVER_PATH ?? resolveOut(nitroMeta.serverEntry, join(OUTPUT_DIR, "server/index.mjs"));
+  process.env.SERVER_PATH ??
+  (existsSync("dist/server/index.mjs") ? "dist/server/index.mjs" : ".output/server/index.mjs");
 
 const publicDir =
-  process.env.PUBLIC_DIR ?? resolveOut(nitroMeta.publicDir, join(OUTPUT_DIR, "client"));
-
-console.log(`Prerender using server entry: ${serverPath}`);
-console.log(`Prerender writing static files to: ${publicDir}`);
+  process.env.PUBLIC_DIR ??
+  (existsSync("dist/client") ? "dist/client" : ".output/public");
 
 if (!existsSync(serverPath)) {
   console.error(`Server bundle not found at ${serverPath}`);
