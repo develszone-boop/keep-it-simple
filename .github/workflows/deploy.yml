@@ -55,6 +55,25 @@ jobs:
 
           echo ""
           echo "======================================"
+          echo "Resolved Nitro output directory"
+          echo "======================================"
+
+          if [ -f dist/nitro.json ]; then
+            cat dist/nitro.json
+            resolved_public="$(node -e "const m=require('./dist/nitro.json');process.stdout.write(m.publicDir||'')")"
+            echo ""
+            echo "nitro publicDir: ${resolved_public:-<unset>}"
+            if [ -n "$resolved_public" ] && [ "$resolved_public" != "client" ] && [ "$resolved_public" != "dist/client" ]; then
+              echo "ERROR: build wrote its public files to '$resolved_public', but this workflow uploads dist/client."
+              echo "Fix nitro.output.publicDir in vite.config.ts so both agree."
+              exit 1
+            fi
+          else
+            echo "WARNING: dist/nitro.json not found"
+          fi
+
+          echo ""
+          echo "======================================"
           echo "Listing dist/client"
           echo "======================================"
 
