@@ -10,6 +10,8 @@ interface Client {
   name: string;
   logo?: string;
   url: string;
+  domain: string;
+  services: string;
   isTextLogo?: boolean;
 }
 
@@ -18,40 +20,56 @@ const clients: Client[] = [
     name: "DCS Tech Hub",
     logo: dcsLogo,
     url: "https://www.dcstechhub.com/",
+    domain: "dcstechhub.com",
+    services: "Website Creation · SEO & Visibility",
   },
   {
     name: "AGR Foundation",
     logo: agrLogo,
     url: "https://www.agrfoundation.ngo/",
+    domain: "agrfoundation.ngo",
+    services: "Website Creation · SEO & Visibility",
   },
   {
     name: "Vedha Mantra",
     logo: vedhaMantraLogo,
     url: "https://vedhamantra.com/",
+    domain: "vedhamantra.com",
+    services: "Website Creation · SEO & Visibility",
   },
   {
     name: "For You Local",
     url: "https://foryoulocal.com/",
+    domain: "foryoulocal.com",
+    services: "Website Creation · SEO & Visibility",
     isTextLogo: true,
   },
   {
     name: "Gear Monkey",
     url: "https://gearmonkey.in/",
+    domain: "gearmonkey.in",
+    services: "Website Creation · SEO & Visibility",
     isTextLogo: true,
   },
   {
     name: "Monockle",
     url: "https://www.monockle.com/",
+    domain: "monockle.com",
+    services: "Website Creation · SEO & Visibility",
     isTextLogo: true,
   },
   {
     name: "MindSportz",
     url: "https://mindsportz.in/",
+    domain: "mindsportz.in",
+    services: "Website Creation · SEO & Visibility",
     isTextLogo: true,
   },
   {
     name: "Kyrosonics",
     url: "https://kyrosonics.com/",
+    domain: "kyrosonics.com",
+    services: "Website Creation · SEO & Visibility",
     isTextLogo: true,
   },
 ];
@@ -76,10 +94,15 @@ const Clients = () => {
           <h2 className="font-display text-3xl md:text-4xl font-bold mt-3">
             Trusted by <span className="gradient-text">Leading Businesses</span>
           </h2>
+          <p className="mt-4 text-muted-foreground max-w-2xl mx-auto">
+            End-to-end <strong className="text-foreground font-semibold">Website Creation</strong> and{" "}
+            <strong className="text-foreground font-semibold">SEO &amp; Visibility</strong> delivered for every
+            brand below. Visit their live sites to see the work.
+          </p>
         </motion.div>
 
         {/* Client Logos Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 items-center max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
           {clients.map((client, index) => (
             <motion.a
               key={client.name}
@@ -88,22 +111,30 @@ const Clients = () => {
               rel="noopener noreferrer"
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.4, delay: index * 0.1 }}
-              className="group flex items-center justify-center p-4 h-24 rounded-xl bg-background border border-border hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10 transition-all duration-300"
-              title={client.name}
+              transition={{ duration: 0.4, delay: index * 0.08 }}
+              className="group flex flex-col items-center justify-start gap-3 p-5 rounded-xl bg-background border border-border hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10 transition-all duration-300"
+              title={`${client.name} — Website Creation and SEO & Visibility by trikalnetra`}
             >
-              {client.isTextLogo ? (
-                <span className="font-display font-bold text-lg text-foreground group-hover:text-primary transition-colors duration-300 text-center">
-                  {client.name}
-                </span>
-              ) : (
-                <img
-                  src={client.logo}
-                  alt={`${client.name} logo`}
-                  loading="lazy"
-                  className="max-h-14 max-w-full object-contain grayscale group-hover:grayscale-0 transition-all duration-300"
-                />
-              )}
+              <div className="flex h-16 items-center justify-center">
+                {client.isTextLogo ? (
+                  <span className="font-display font-bold text-lg text-foreground group-hover:text-primary transition-colors duration-300 text-center">
+                    {client.name}
+                  </span>
+                ) : (
+                  <img
+                    src={client.logo}
+                    alt={`${client.name} logo`}
+                    loading="lazy"
+                    className="max-h-14 max-w-full object-contain grayscale group-hover:grayscale-0 transition-all duration-300"
+                  />
+                )}
+              </div>
+              <span className="text-sm text-primary/90 group-hover:text-primary transition-colors duration-300 break-all text-center">
+                {client.domain}
+              </span>
+              <span className="text-xs text-muted-foreground text-center leading-relaxed">
+                {client.services}
+              </span>
             </motion.a>
           ))}
         </div>
