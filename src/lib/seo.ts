@@ -19,7 +19,7 @@ export interface PageSeoOptions {
 export function pageSeo({ path, title, description, type = "website", jsonLd = [] }: PageSeoOptions): {
   meta: MetaTag[];
   links: LinkTag[];
-  scripts?: ScriptTag[];
+  scripts: ScriptTag[];
 } {
   const url = `${SITE_URL}${path === "/" ? "/" : path}`;
 
@@ -41,12 +41,10 @@ export function pageSeo({ path, title, description, type = "website", jsonLd = [
       { name: "twitter:image", content: OG_IMAGE },
     ],
     links: [{ rel: "canonical", href: url }],
-    scripts: jsonLd.length
-      ? jsonLd.map((data) => ({
-          type: "application/ld+json",
-          children: JSON.stringify(data),
-        }))
-      : undefined,
+    scripts: jsonLd.map((data) => ({
+      type: "application/ld+json",
+      children: JSON.stringify(data),
+    })),
   };
 }
 
