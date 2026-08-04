@@ -99,10 +99,22 @@ const notFoundPath = join(publicDir, "404.html");
 cpSync(indexPath, notFoundPath);
 console.log(`Copied ${indexPath} → ${notFoundPath}`);
 
-// CNAME tells GitHub Pages which custom domain to serve.
-if (existsSync("CNAME")) {
-  cpSync("CNAME", join(publicDir, "CNAME"));
-  console.log("Copied CNAME to output");
+// CNAME tells GitHub Pages which custom domain to serve. Vite normally copies
+// public/CNAME into the public output during build; copy it defensively in case
+// the output was cleaned before prerendering, then verify the final artifact.
+const cnameSourcePath = "public/CNAME";
+const cnameOutputPath = join(publicDir, "CNAME");
+if (!existsSync(cnameSourcePath)) {
+  console.error(`Required domain file not found at ${cnameSourcePath}`);
+  process.exit(1);
+}
+cpSync(cnameSourcePath, cnameOutputPath);
+console.log(`Copied ${cnameSourcePath} → ${cnameOutputPath}`);
+
+const cname = readFileSync(cnameOutputPath, "utf8").trim();
+if (cname !== "trikalnetra.com") {
+  console.error(`Invalid CNAME in ${cnameOutputPath}: expected trikalnetra.com, received ${cname || "(empty)"}`);
+  process.exit(1);
 }
 
 // The imported production server can retain background handles. GitHub Actions
