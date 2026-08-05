@@ -141,7 +141,8 @@ const Services = () => {
               <div className="h-40 overflow-hidden">
                 <img 
                   src={service.image} 
-                  alt={service.title}
+                  alt={`${service.title} service by trikalnetra`}
+                  loading="lazy"
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                 />
               </div>
