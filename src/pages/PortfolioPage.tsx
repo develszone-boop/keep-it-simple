@@ -11,6 +11,7 @@ import {
 import { Link } from "@tanstack/react-router";
 import Footer from "@/components/Footer";
 import PageHeader from "@/components/PageHeader";
+import Clients from "@/components/Clients";
 import { Button } from "@/components/ui/button";
 
 const capabilities = [
