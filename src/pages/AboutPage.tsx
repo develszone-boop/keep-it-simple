@@ -104,7 +104,8 @@ const AboutPage = () => {
             >
               <img
                 src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&h=600&fit=crop"
-                alt="Team collaboration"
+                alt="trikalnetra team collaborating on a client growth project"
+                loading="lazy"
                 className="rounded-2xl shadow-elevated w-full"
               />
               <div className="absolute -bottom-6 -left-6 p-6 rounded-xl bg-background border border-border shadow-card">
