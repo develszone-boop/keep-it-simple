@@ -1,5 +1,7 @@
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
+import { ExternalLink } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 
 // Import client logos
 import dcsLogo from "@/assets/clients/dcs-tech.svg";
