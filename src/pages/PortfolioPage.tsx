@@ -104,6 +104,8 @@ const CapabilitiesPage = () => {
         </div>
       </section>
 
+      <Clients />
+
       {/* CTA Section */}
       <section className="py-16 bg-primary text-primary-foreground">
         <div className="container mx-auto px-6 text-center">
