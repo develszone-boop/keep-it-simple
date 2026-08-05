@@ -172,7 +172,8 @@ const ContactPage = () => {
               <div className="rounded-2xl overflow-hidden">
                 <img
                   src="https://images.unsplash.com/photo-1587474260584-136574528ed5?w=600&h=300&fit=crop"
-                  alt="Hyderabad, India"
+                  alt="Hyderabad, Telangana — trikalnetra's base of operations"
+                  loading="lazy"
                   className="w-full h-48 object-cover"
                 />
                 <div className="p-4 bg-secondary/30 border border-t-0 border-border">

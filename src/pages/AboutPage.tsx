@@ -104,7 +104,8 @@ const AboutPage = () => {
             >
               <img
                 src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&h=600&fit=crop"
-                alt="Team collaboration"
+                alt="trikalnetra team collaborating on a client growth project"
+                loading="lazy"
                 className="rounded-2xl shadow-elevated w-full"
               />
               <div className="absolute -bottom-6 -left-6 p-6 rounded-xl bg-background border border-border shadow-card">
@@ -241,22 +242,26 @@ const AboutPage = () => {
             >
               <img
                 src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=400&h=300&fit=crop"
-                alt="Team meeting"
+                alt="trikalnetra strategy team in a project planning meeting"
+                loading="lazy"
                 className="rounded-xl w-full"
               />
               <img
                 src="https://images.unsplash.com/photo-1553877522-43269d4ea984?w=400&h=300&fit=crop"
-                alt="Office environment"
+                alt="trikalnetra office workspace in Hyderabad"
+                loading="lazy"
                 className="rounded-xl w-full mt-8"
               />
               <img
                 src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=400&h=300&fit=crop"
-                alt="Team collaboration"
+                alt="Developers collaborating on a client website build"
+                loading="lazy"
                 className="rounded-xl w-full"
               />
               <img
                 src="https://images.unsplash.com/photo-1531482615713-2afd69097998?w=400&h=300&fit=crop"
-                alt="Creative work"
+                alt="Designers working on brand and SEO creative"
+                loading="lazy"
                 className="rounded-xl w-full mt-8"
               />
             </motion.div>

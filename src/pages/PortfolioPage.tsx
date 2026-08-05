@@ -11,6 +11,7 @@ import {
 import { Link } from "@tanstack/react-router";
 import Footer from "@/components/Footer";
 import PageHeader from "@/components/PageHeader";
+import Clients from "@/components/Clients";
 import { Button } from "@/components/ui/button";
 
 const capabilities = [
@@ -102,6 +103,8 @@ const CapabilitiesPage = () => {
           </div>
         </div>
       </section>
+
+      <Clients />
 
       {/* CTA Section */}
       <section className="py-16 bg-primary text-primary-foreground">

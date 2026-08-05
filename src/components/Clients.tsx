@@ -1,5 +1,7 @@
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
+import { ExternalLink } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 
 // Import client logos
 import dcsLogo from "@/assets/clients/dcs-tech.svg";
@@ -99,6 +101,10 @@ const Clients = () => {
             <strong className="text-foreground font-semibold">SEO &amp; Visibility</strong> delivered for every
             brand below. Visit their live sites to see the work.
           </p>
+          <p className="mt-2 text-sm text-muted-foreground max-w-2xl mx-auto">
+            Both are core categories of trikalnetra&apos;s service stack — every client below was built,
+            optimised and made searchable by our team.
+          </p>
         </motion.div>
 
         {/* Client Logos Grid */}
@@ -135,8 +141,22 @@ const Clients = () => {
               <span className="text-xs text-muted-foreground text-center leading-relaxed">
                 {client.services}
               </span>
+              <span className="mt-1 inline-flex items-center gap-1 text-xs font-semibold text-primary opacity-70 group-hover:opacity-100 transition-opacity">
+                Visit site
+                <ExternalLink className="w-3 h-3" />
+              </span>
             </motion.a>
           ))}
+        </div>
+
+        <div className="mt-10 text-center">
+          <Link
+            to="/portfolio"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline"
+          >
+            View all client work and capabilities
+            <ExternalLink className="w-4 h-4" />
+          </Link>
         </div>
       </div>
     </section>

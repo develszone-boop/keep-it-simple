@@ -34,11 +34,15 @@ export function pageSeo({ path, title, description, type = "website", jsonLd = [
       { property: "og:description", content: description },
       { property: "og:url", content: url },
       { property: "og:image", content: OG_IMAGE },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      { property: "og:image:alt", content: `${SITE_NAME} — ${title}` },
       { property: "og:locale", content: "en_IN" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: title },
       { name: "twitter:description", content: description },
       { name: "twitter:image", content: OG_IMAGE },
+      { name: "twitter:image:alt", content: `${SITE_NAME} — ${title}` },
     ],
     links: [{ rel: "canonical", href: url }],
     scripts: jsonLd.map((data) => ({
@@ -70,6 +74,16 @@ export const organizationJsonLd = {
   image: OG_IMAGE,
   email: CONTACT_EMAIL,
   telephone: CONTACT_PHONE,
+  contactPoint: [
+    {
+      "@type": "ContactPoint",
+      contactType: "customer support",
+      email: CONTACT_EMAIL,
+      telephone: CONTACT_PHONE,
+      areaServed: "IN",
+      availableLanguage: ["en", "hi", "te"],
+    },
+  ],
   description:
     "trikalnetra delivers business analytics, digital marketing, web development, SEO and cybersecurity services for growing businesses.",
   address: {
